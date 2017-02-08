@@ -1,7 +1,11 @@
+# This Python program runs simulations for a 2D Ising model using Monte-Carlo approach
+#
+
 import numpy as np , random , math as m
 
 spinsPerSide=20
 spins=np.ones((spinsPerSide,spinsPerSide))    # fills new array with 1
+# spin coupling strength
 J=0.44069 #0.3 0.44069 0.8
 
 def FlipSpin():

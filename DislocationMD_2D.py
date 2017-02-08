@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 # ----------------------------------------------------------------------------------------------- #
-# PHY466/MSE 485: Atomic Scale Simulations
-# 3-Dimensional Dislocation -- Group Project Code
+# This Python program runs a 2-Dimensional Dislocation molecular dynamics simulation
+# Served as the Phys466 Group Project Code
 # ----------------------------------------------------------------------------------------------- #
 
 import numpy as np

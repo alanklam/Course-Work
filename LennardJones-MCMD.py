@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # ------------------------------------------------------------------------
-# PHY466/MSE485 Atomic Scale Simulations
-# Homework 2: Introduction to Molecular Dynamics
+# This python program run a Monte-Carlo simulation of molecular dynamics using Lennard-Jones particles.
+# NVT ensemble is assumed. Particle motions are accepted by probabilities determined by Metropolis rule.
 # ------------------------------------------------------------------------
 
 
@@ -22,10 +22,10 @@ N = 64
 # box side length
 L = 4.0
 
-# temperature
+# scaled temperature
 T0 = 0.5
 
-# Everyone will start their gas in the same initial configuration.
+# initial configuration
 # ------------------------------------------------------------------------
 def InitPositionCubic(N,L):
   position = numpy.zeros((N,3)) + 0.0
@@ -49,7 +49,7 @@ def InitPositionCubic(N,L):
           added += 1
   return position
 
-# Routines to ensure periodic boundary conditions that YOU must write.
+# Routines to ensure periodic boundary conditions
 # ------------------------------------------------------------------------
 def PutInBox(Ri):
   global L
@@ -150,14 +150,14 @@ def VerletNextV(v_t,a_t,a_t_plus_h):
   v_t_plus_h[2]=v_t[2]+0.5*(a_t[2]+a_t_plus_h[2])*h
   return v_t_plus_h
 
-# Some instantaneous properties of the system. YOU must write this.
+# Some instantaneous properties of the system
 # ------------------------------------------------------------------------
 def CalcPotential(position,i):
   myPotential = 0.0
   for j in range(len(position)):
     if j!=i:
          r=Distance(position[j],position[i])
-#         myPotential+=4.0*(1.0/(r**12)-1.0/(r**6))
+         myPotential+=4.0*(1.0/(r**12)-1.0/(r**6))
          myPotential+=r/0.8
   return myPotential
 
@@ -194,8 +194,8 @@ if __name__ == '__main__':
         rejected+=1
       if passes>eqt-1:  
         Energy[count]=ComputeEnergy(Positions)
-##        gr+=Computeg(Positions,dr)
-##        skList+=Sk(kList,Positions)
+        gr+=Computeg(Positions,dr)
+        skList+=Sk(kList,Positions)
         #print((i+1)*update,Energy[count])
         count+=1
     if passes>eqt-1: #calculate g and S only after equilibration
@@ -227,7 +227,7 @@ if __name__ == '__main__':
   pylab.xlabel("r")
   pylab.ylabel("g(r)")
   r=numpy.multiply(numpy.linspace(1,math.ceil(L/2/dr),num=math.ceil(L/2/dr)),dr)
-##  r=numpy.multiply(numpy.linspace(1,len(gr),num=len(gr)),dr)
+  r=numpy.multiply(numpy.linspace(1,len(gr),num=len(gr)),dr)
   pylab.plot(r,gr[0:len(r)])
   pylab.figure(2)  
   pylab.xlabel("MC step")
@@ -243,9 +243,5 @@ if __name__ == '__main__':
   pylab.show()
   print("Accepted ratio=",1-rejected/passes/N)
 
-  outFile =open("testxy.txt","w")
-  for i in range(0,N):
-    outFile.write(str(Positions[i][0])+" "+str(Positions[i][1])+" "+str(Positions[i][2])+"\n")
-  outFile.close()
   
 

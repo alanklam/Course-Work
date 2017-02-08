@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # ------------------------------------------------------------------------
-# PHY466/MSE485 Atomic Scale Simulations
-# Homework 2: Introduction to Molecular Dynamics
+# This python program run a molecular dynamics simulations using Lennard-Jones particles.
+# NVT ensemble is assumed. Integrations are done using Verlet scheme.
 # ------------------------------------------------------------------------
 
 
@@ -22,11 +22,11 @@ N = 125
 # box side length
 L = 4.2323167
 
-# temperature
+# scaled temperature
 T0 = 2.0
 
 
-# Everyone will start their gas in the same initial configuration.
+# initial configuration
 # ------------------------------------------------------------------------
 def InitPositionCubic(N,L):
   position = numpy.zeros((N,3)) + 0.0
@@ -70,7 +70,7 @@ def InitVelocity(N,T0,mass):
   return velocity
 
 
-# Routines to ensure periodic boundary conditions that YOU must write.
+# Routines to ensure periodic boundary conditions
 # ------------------------------------------------------------------------
 def PutInBox(Ri):
   for i in range(3):
@@ -148,7 +148,7 @@ def V_t(r_t_min_h,r_t_plus_h):
   v_t[2]=(r_t_plus_h[2]-r_t_min_h[2])/2/h
   return v_t
 
-# We want Lennard-Jones forces. YOU must write this.
+# Lennard-Jones forces
 # ------------------------------------------------------------------------
 def InternalForce(i, R):
   F = [0.0, 0.0, 0.0]
@@ -161,7 +161,7 @@ def InternalForce(i, R):
   return F
 
 
-# Some instantaneous properties of the system. YOU must write this.
+# Some instantaneous properties of the system
 # ------------------------------------------------------------------------
 
 def ComputeEnergy(R, V):
@@ -253,21 +253,21 @@ if __name__ == '__main__':
   steps = 100
   dr=0.01
   gr=0.0
-##  Nstore=steps-400
-##  vstore=numpy.zeros((Nstore,N,3))
+  Nstore=steps-400
+  vstore=numpy.zeros((Nstore,N,3))
   Energy=numpy.zeros(steps)
   vcount=0
   kList=LegalKVecs(5)
   skList=numpy.zeros((len(kList),))
   for t in range(0,steps):
     Energy[t]=ComputeEnergy(R,V)[0]
-##    if t%(steps-1)==0:
-##      pylab.figure()
-##      for i in range(N):
-##        pylab.plot(R[i][0],R[i][1],'x')
-##      pylab.figure()
-##      for i in range(N):
-##        pylab.plot(R[i][0],R[i][2],'x') 
+    if t%(steps-1)==0:
+      pylab.figure()
+      for i in range(N):
+        pylab.plot(R[i][0],R[i][1],'x')
+      pylab.figure()
+      for i in range(N):
+        pylab.plot(R[i][0],R[i][2],'x')
     
     for i in range(0,len(R)):
       F    = InternalForce(i, R)
@@ -296,58 +296,55 @@ if __name__ == '__main__':
     if t>399:   
        skList+=Sk(kList)
        gr+=Computeg(R,dr)
-##       vstore[vcount]=V
-##       vcount+=1
+       vstore[vcount]=V
+       vcount+=1
 
 #calculate <vv> and diffusion constant
-##  D=0.0
-##  vvt=numpy.zeros((Nstore,))
-##  c=VV(vstore[0],vstore[0])
-##  for i in range(Nstore):
-##    vvt[i]=VV(vstore[0],vstore[i])/c
-##    D+=vvt[i]
-##  print(D)
+  D=0.0
+  vvt=numpy.zeros((Nstore,))
+  c=VV(vstore[0],vstore[0])
+  for i in range(Nstore):
+    vvt[i]=VV(vstore[0],vstore[i])/c
+    D+=vvt[i]
+  print(D)
 
 #plotting results of S(k) and g(r) or v-v correlation
-##  pylab.xlabel("time step")
-##  pylab.ylabel("V-V correlation")
-##  pylab.plot(numpy.linspace(0,Nstore-1,num=Nstore),vvt,'+')
-##  pylab.show()
+  pylab.xlabel("time step")
+  pylab.ylabel("V-V correlation")
+  pylab.plot(numpy.linspace(0,Nstore-1,num=Nstore),vvt,'+')
+  pylab.show()
     
-##  for i in range(len(skList)):
-##    skList[i]=skList[i]/Nstore  
-##  for i in range(len(gr)):
-##    gr[i]=gr[i]/Nstore
-##  kMagList=[]
-##  for k in kList:
-##    kMagList.append(math.sqrt(k[0]**2+k[1]**2+k[2]**2))
-##  kMagList2=[]
-##  skList2=[]
-##  count=0
-##  for i in range(len(kMagList)):
-##    if kMagList2.count(kMagList[i])==0:
-##      n=kMagList.count(kMagList[i])
-##      kMagList2.append(kMagList[i])
-##      skList2.append(skList[i])
-##      for j in range(i+1,len(kMagList)):
-##        if kMagList[j]==kMagList[i]:
-##          skList2[count]+=skList[j]
-##      skList2[count]*=1/n
-##      count+=1   
-##  pylab.figure(1)  
-##  pylab.xlabel("r")
-##  pylab.ylabel("g(r)")
-##  r=numpy.multiply(numpy.linspace(1,len(gr),num=len(gr)),dr)
-##  pylab.plot(r,gr,'+')
-##  pylab.figure(2)  
-##  pylab.xlabel("k magnitude")
-##  pylab.ylabel("Structure Factor")
-##  pylab.plot(kMagList2,skList2,'+')     
+  for i in range(len(skList)):
+    skList[i]=skList[i]/Nstore
+  for i in range(len(gr)):
+    gr[i]=gr[i]/Nstore
+  kMagList=[]
+  for k in kList:
+    kMagList.append(math.sqrt(k[0]**2+k[1]**2+k[2]**2))
+  kMagList2=[]
+  skList2=[]
+  count=0
+  for i in range(len(kMagList)):
+    if kMagList2.count(kMagList[i])==0:
+      n=kMagList.count(kMagList[i])
+      kMagList2.append(kMagList[i])
+      skList2.append(skList[i])
+      for j in range(i+1,len(kMagList)):
+        if kMagList[j]==kMagList[i]:
+          skList2[count]+=skList[j]
+      skList2[count]*=1/n
+      count+=1
+  pylab.figure(1)
+  pylab.xlabel("r")
+  pylab.ylabel("g(r)")
+  r=numpy.multiply(numpy.linspace(1,len(gr),num=len(gr)),dr)
+  pylab.plot(r,gr,'+')
+  pylab.figure(2)
+  pylab.xlabel("k magnitude")
+  pylab.ylabel("Structure Factor")
+  pylab.plot(kMagList2,skList2,'+')
+
   pylab.plot(numpy.linspace(1,len(Energy),num=len(Energy)),Energy)     
   pylab.show()
 
 
-  outFile =open("testxy.txt","w")
-  for i in range(0,N):
-    outFile.write(str(R[i][0])+" "+str(R[i][1])+" "+str(R[i][2])+"\n")
-  outFile.close()

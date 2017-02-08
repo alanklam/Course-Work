@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# This Python program performs some very basic statistical calculations to calculate
+# mean, standard deviation, autocorrelation time and standard error of the input data set
+
 import sys, os
 import ReadData 
 import numpy
@@ -10,6 +13,7 @@ if __name__ == '__main__':
   if len(sys.argv) > 1:
     readFilename = os.path.realpath(sys.argv[1])
   else:
+    # define input file below
     readFilename = "AtomicScale_HW1_data4.txt"
 
   myArray=ReadData.loadAscii(readFilename)
